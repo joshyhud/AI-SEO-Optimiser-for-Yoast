@@ -8,7 +8,9 @@ Author: Your Name
 Author URI: https://josh-hudson.co.uk
 */
 
+require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/vendor/autoload.php';
+
 
 use GuzzleHttp\Client;
 
@@ -35,6 +37,15 @@ function ai_seo_description_menu()
     'dashicons-admin-generic', // Icon URL
     20                       // Position
   );
+
+  add_submenu_page(
+    'ai-seo-generator', // Parent menu slug
+    'AI SEO Generator Submenu', // Page title
+    'Settings', // Menu title
+    'manage_options', // Capability
+    'ai-seo-generator-setting', // Menu slug
+    'ai_seo_generator_settings_page' // Callback function
+  );
 }
 
 function ai_seo_generator_page()
@@ -50,19 +61,21 @@ function ai_seo_generator_page()
       }
     </script>
 
-    <form method="post">
-      <input type="radio" name="content_type" value="post" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'post') echo "checked"; ?>> Posts<br>
-      <input type="radio" name="content_type" value="page" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'page') echo "checked"; ?>> Pages<br>
-      <input type="radio" id="specific_page_radio" name="content_type" value="specific_page" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'specific_page') echo "checked"; ?>> Specific Page<br>
-      <select id="specific_page" name="specific_page" <?php if (!isset($_POST['content_type']) || $_POST['content_type'] != 'specific_page') echo "disabled"; ?>>
-        <option value="">Select a Page</option>
-        <?php
-        $pages = get_pages();
-        foreach ($pages as $page) {
-          echo '<option value="' . esc_attr($page->ID) . '"' . selected($_POST['specific_page'], $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
-        }
-        ?>
-      </select><br>
+    <form method="post" class="ai-form">
+      <div class="postType">
+        <input type="radio" name="content_type" value="post" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'post') echo "checked"; ?>> Posts<br>
+        <input type="radio" name="content_type" value="page" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'page') echo "checked"; ?>> Pages<br>
+        <input type="radio" id="specific_page_radio" name="content_type" value="specific_page" <?php if (isset($_POST['content_type']) && $_POST['content_type'] == 'specific_page') echo "checked"; ?>> Specific Page<br>
+        <select id="specific_page" name="specific_page" <?php if (!isset($_POST['content_type']) || $_POST['content_type'] != 'specific_page') echo "disabled"; ?>>
+          <option value="">Select a Page</option>
+          <?php
+          $pages = get_pages();
+          foreach ($pages as $page) {
+            echo '<option value="' . esc_attr($page->ID) . '"' . selected($_POST['specific_page'], $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
+          }
+          ?>
+        </select>
+      </div>
       <input type="submit" name="ai_seo_generate" class="button button-primary" value="Generate Descriptions">
       <input type="checkbox" name="ai_seo_dry_run" checked> Dry Run<br>
     </form>
@@ -129,7 +142,7 @@ function handle_post_request()
         $current_meta_desc = get_post_meta($page->ID, '_yoast_wpseo_metadesc', true);
         $current_keywords = get_post_meta($page->ID, '_yoast_wpseo_focuskw', true);
         if (!empty($current_meta_desc) && !empty($current_keywords)) {
-          echo "<p>Meta description or Keywords already exists for post/page ID: {$page->ID}</p>";
+          echo "<p>Meta description or Keywords already exist for post/page ID: {$page->ID}. Skipping...</p>";
           continue;
         }
         $descriptions[$page->ID] = fetch_ai_description($page->post_content);
@@ -170,11 +183,18 @@ function fetch_ai_description($post_content)
   }
 
   $text_content = extract_text_from_gutenberg_content($post_content);
+  $api_key = get_option('openai_api_key');
+
+  // Check if API key is empty
+  if (empty($api_key)) {
+    return 'Please update your API key in the plugin settings page.';
+  }
+
   $client = new Client(['verify' => false]);
   try {
     $response = $client->request('POST', 'https://api.openai.com/v1/chat/completions', [
       'headers' => [
-        'Authorization' => 'Bearer ' . OPENAI_API_KEY,
+        'Authorization' => 'Bearer ' . $api_key,
         'Content-Type' => 'application/json',
       ],
       'json' => [
@@ -225,4 +245,58 @@ function extract_keywords_from_text($text, $num_keywords = 5)
   $keywords = array_count_values($words);
   arsort($keywords);  // Sort by frequency
   return array_slice(array_keys($keywords), 0, $num_keywords);
+}
+
+// Settings page
+function ai_seo_generator_settings_page()
+{
+  // Save API key
+  if (isset($_POST['save_api_key'])) {
+    $api_key = sanitize_text_field($_POST['api_key']);
+    update_option('openai_api_key', $api_key);
+    echo '<div class="notice notice-success"><p>API key saved successfully.</p></div>';
+  }
+
+  // Get API key
+  $api_key = get_option('openai_api_key', '');
+
+  // Display settings form
+?>
+  <div class="wrap">
+    <h1>AI SEO Generator Settings</h1>
+    <form method="post">
+      <table class="form-table">
+        <tr>
+          <th scope="row"><label for="api_key">ChatGPT API Key</label></th>
+          <td>
+            <input type="text" id="api_key" name="api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text">
+            <p class="description">Enter your ChatGPT API key.</p>
+          </td>
+        </tr>
+      </table>
+      <?php submit_button('Save API Key', 'primary', 'save_api_key'); ?>
+    </form>
+    <h2>How to get an API key from OpenAI</h2>
+    <ol>
+      <li>Go to the OpenAI website: <a target="_blank" https://openai.com">https://openai.com</a></li>
+      <li>Create an account or log in to your existing account</li>
+      <li>Go to the API section of your account settings</li>
+      <li>Generate an API key</li>
+      <li>Copy the generated API key</li>
+      <li>Paste the API key into the "ChatGPT API Key" field above</li>
+      <li>Click "Save API Key"</li>
+    </ol>
+  </div>
+<?php
+}
+
+
+register_activation_hook(__FILE__, 'ai_seo_plugin_activation');
+
+function ai_seo_plugin_activation()
+{
+  if (!is_plugin_active('wordpress-seo/wp-seo.php')) {
+    // Yoast SEO plugin is not active, display a message to install it first
+    wp_die('Please install and activate the Yoast SEO plugin before activating the AI SEO Description Generator plugin.');
+  }
 }
