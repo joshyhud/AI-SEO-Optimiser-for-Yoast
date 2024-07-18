@@ -1,0 +1,12 @@
+{
+    "name": "plugin/seo-ai",
+    "description": "A wordpress plugin to generate yoast seo descriptions and keywords based on page or post content",
+    "authors": [
+        {
+            "name": "josh hudson"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.8"
+    }
+}
