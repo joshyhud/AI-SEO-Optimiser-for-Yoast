@@ -1,1 +1,90 @@
-form{display:flex;flex-direction:column;gap:20px}/*# sourceMappingURL=styles.min.css.map */
+.toplevel_page_ai-seo-generator,
+.ai-seo-generator_page_ai-seo-generator-setting {
+  background-color: #0073aa;
+  padding: 10px;
+  font-size: 16px;
+}
+#aiSeo.wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+#aiSeo.wrapper h1 {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+#aiSeo .ai-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#aiSeo .ai-form input[type="checkbox"] {
+  margin: 0 10px 0 0;
+}
+#aiSeo .ai-form .input {
+  display: block;
+}
+#aiSeo .ai-form .input input,
+#aiSeo .ai-form .input label {
+  display: inline-block;
+  vertical-align: middle;
+}
+#aiSeo .ai-form .postType {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #333;
+}
+#aiSeo .ai-form .postType label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #333;
+}
+#aiSeo .ai-form .postType label i {
+  font-size: 12px;
+}
+#aiSeo .ai-form .postType select {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f9f9f9;
+  width: 100%;
+  background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23a0a5aa%22%2F%3E%3C%2Fsvg%3E);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-position-x: 95%;
+}
+#aiSeo .ai-form .button.button-primary {
+  width: 300px;
+  text-align: center;
+  align-self: center;
+  padding: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #0073aa;
+  border: none;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+#aiSeo .ai-form .button.button-primary:hover {
+  background-color: #005f8d;
+}
+.api_key {
+  -webkit-text-security: disc;
+  text-security: disc;
+} /*# sourceMappingURL=styles.min.css.map */
