@@ -20,4 +20,8 @@ window.onload = function () {
       specificPageInput.disabled = true;
     }
   });
+
+  document.getElementsByTagName("form").submit = function () {
+    document.getElementById("loading").show();
+  };
 };

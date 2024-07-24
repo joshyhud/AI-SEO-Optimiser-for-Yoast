@@ -36,7 +36,7 @@ function handle_post_request()
 
     // Validate content type
     if (!in_array($content_types, ['post', 'page', 'specific_page'])) {
-      die('Invalid content type');
+      die('Select a content type');
     }
 
     $descriptions = [];
@@ -47,7 +47,7 @@ function handle_post_request()
         $current_meta_desc = get_post_meta($post->ID, '_yoast_wpseo_metadesc', true);
         $current_keywords = get_post_meta($post->ID, '_yoast_wpseo_focuskw', true);
         if (!empty($current_meta_desc) && !empty($current_keywords)) {
-          echo "<p>Meta description and Keywords already exist for post/page ID: " . esc_html($post->ID) . ". Skipping...</p>";
+          echo "<p>Meta description and Keywords already exist for post: " . esc_html(get_the_title($post->ID)) . ". Skipping...</p>";
           continue;
         }
         $descriptions[$post->ID] = fetch_ai_description($post->post_content);
@@ -64,7 +64,7 @@ function handle_post_request()
         $current_meta_desc = get_post_meta($page->ID, '_yoast_wpseo_metadesc', true);
         $current_keywords = get_post_meta($page->ID, '_yoast_wpseo_focuskw', true);
         if (!empty($current_meta_desc) && !empty($current_keywords)) {
-          echo "<p>Meta description or Keywords already exist for post/page ID: " . esc_html($page->ID) . ". Skipping...</p>";
+          echo "<p>Meta description or Keywords already exist for page: " . esc_html(get_the_title($page->ID)) . ". Skipping...</p>";
           continue;
         }
         $descriptions[$page->ID] = fetch_ai_description($page->post_content);
@@ -82,15 +82,15 @@ function handle_post_request()
       if (!$is_dry_run) {
         if (!empty($desc_text)) {
           update_post_meta($id, '_yoast_wpseo_metadesc', $desc_text);
-          echo "<p>Meta description updated for post/page ID: " . esc_html($id) . " - Description: " . esc_html($desc_text) . "</p>";
+          echo "<p>Meta description updated for post/page: " . esc_html(get_the_title($id)) . " - Description: " . esc_html($desc_text) . "</p>";
         }
 
         if (!empty($keywords[0])) {
           update_post_meta($id, '_yoast_wpseo_focuskw', $keywords[0]);
-          echo "<p>Keywords updated for post/page ID: " . esc_html($id) . " - Keywords: " . esc_html($keywords[0]) . "</p>";
+          echo "<p>Keywords updated for post/page: " . esc_html(get_the_title($id)) . " - Keywords: " . esc_html($keywords[0]) . "</p>";
         }
       } else {
-        echo "<p><strong>Post/Page ID: " . esc_html($id) . " - </strong> Description: " . esc_html($desc_text) . ", Keywords: " . esc_html($keywords[0]) . " </p>";
+        echo "<p><strong>Post/Page: " . esc_html(get_the_title($id)) . " - </strong> Description: " . esc_html($desc_text) . ", Keywords: " . esc_html($keywords[0]) . " </p>";
       }
     }
   }

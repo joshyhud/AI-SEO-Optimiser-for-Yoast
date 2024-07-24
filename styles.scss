@@ -1,12 +1,21 @@
 .toplevel_page_ai-seo-generator,
 .ai-seo-generator_page_ai-seo-generator-setting {
-  background-color: #0073aa;
+  background-color: rgb(139, 215, 177);
   padding: 10px;
   font-size: 16px;
+  color: #2d3748;
 }
 
 #aiSeo {
-  &.wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrapper {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -16,7 +25,6 @@
 
     h1 {
       font-size: 24px;
-      color: #333;
       text-align: center;
       margin-bottom: 20px;
     }
@@ -100,4 +108,9 @@
 .api_key {
   -webkit-text-security: disc;
   text-security: disc;
+}
+
+#wpfooter,
+.notice {
+  display: none;
 }

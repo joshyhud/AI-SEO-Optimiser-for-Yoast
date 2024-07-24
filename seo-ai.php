@@ -58,40 +58,66 @@ function ai_seo_description_menu()
 function ai_seo_generator_page()
 {
 ?>
-  <section id="aiSeo" class="wrapper">
-    <h1>AI SEO Description Generator</h1>
+  <section id="aiSeo">
+    <div class="wrapper">
+      <h1>AI SEO Description Generator</h1>
+      <?php if (empty(get_option('openai_api_key')) || !is_plugin_active('wordpress-seo/wp-seo.php')) { ?>
+        <p>This plugin generates SEO descriptions and keywords for pages and posts using OpenAI and updates the Yoast SEO fields. It provides a user-friendly interface for generating SEO data and allows you to choose the content type (posts, pages, or specific pages) for which you want to generate descriptions. Follow the steps below to get started:</p>
 
-    <form method="post" class="ai-form">
-      <?php wp_nonce_field('ai_seo_generate_action', 'ai_seo_generate_nonce'); ?>
-      <div class="postType">
-        <ul>
-          <li>
-            <input type="radio" name="content_type" value="post" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'post') echo "checked"; ?>> Posts<br>
-          </li>
-          <li>
-            <input type="radio" name="content_type" value="page" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'page') echo "checked"; ?>> Pages<br>
-          </li>
-          <li>
-            <input type="radio" id="specific_page_radio" name="content_type" value="specific_page" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'specific_page') echo "checked"; ?>> Specific Page - <i>Select one page to amend</i><br>
-          </li>
-          <select id="specific_page" name="specific_page" <?php if (!isset($_POST['content_type']) || sanitize_text_field($_POST['content_type']) != 'specific_page') echo "disabled"; ?>>
-            <option value="">Select a Page</option>
-            <?php
-            $pages = get_pages();
-            foreach ($pages as $page) {
-              echo '<option value="' . esc_attr($page->ID) . '"' . selected(sanitize_text_field($_POST['specific_page']), $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
-            }
-            ?>
-          </select>
-        </ul>
-      </div>
-      <div class="input"><input title="Select this to perform a dry run without making data changes" type="checkbox" class="dry-run" name="ai_seo_dry_run" checked><label for="ai_seo_dry_run">Dry Run - <i>Generate SEO data without amending posts/pages</i></label></div>
-      <input type="submit" name="ai_seo_generate" class="button button-primary" value="Generate Descriptions">
+        <?php if (!is_plugin_active('wordpress-seo/wp-seo.php')) { ?>
+          <h3>Install Yoast SEO:</h3>
+          <p>Ensure that the Yoast SEO plugin is installed and activated on your WordPress site. This plugin works in conjunction with Yoast SEO to update the necessary fields.</p>
+        <?php } ?>
+
+        <?php if (empty(get_option('openai_api_key'))) { ?>
+
+          <h3>Obtain an OpenAI API Key:</h3>
+
+          <p>To generate SEO descriptions and keywords, you need an API key from OpenAI. Visit the OpenAI website, sign up for an account, and obtain your API key.</p>
+
+          <h3>Enter the API Key in Plugin Settings:</h3>
+
+          <p>Go to the plugin settings in your WordPress admin area. Enter the OpenAI API key in the designated field and save the settings.</p>
+        <?php } ?>
       <?php
-      //Function to handle form submission
-      handle_post_request();
-      ?>
-    </form>
+      } else { ?>
+        <p>This plugin generates SEO descriptions and keywords for pages and posts using OpenAI and updates the Yoast SEO fields. It provides a user-friendly interface for generating SEO data and allows you to choose the content type (posts, pages, or specific pages) for which you want to generate descriptions.</p>
+        <i>Select a content type or specific page to get started:</i>
+
+        <form method="post" class="ai-form">
+          <?php wp_nonce_field('ai_seo_generate_action', 'ai_seo_generate_nonce'); ?>
+          <div class="postType">
+            <ul>
+              <li>
+                <input type="radio" name="content_type" value="post" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'post') echo "checked"; ?>> Posts<br>
+              </li>
+              <li>
+                <input type="radio" name="content_type" value="page" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'page') echo "checked"; ?>> Pages<br>
+              </li>
+              <li>
+                <input type="radio" id="specific_page_radio" name="content_type" value="specific_page" <?php if (isset($_POST['content_type']) && sanitize_text_field($_POST['content_type']) == 'specific_page') echo "checked"; ?>> Specific Page<br>
+              </li>
+              <select id="specific_page" name="specific_page" <?php if (!isset($_POST['content_type']) || sanitize_text_field($_POST['content_type']) != 'specific_page') echo "disabled"; ?>>
+                <option value="">Select a Page</option>
+                <?php
+                $pages = get_pages();
+                foreach ($pages as $page) {
+                  echo '<option value="' . esc_attr($page->ID) . '"' . selected(sanitize_text_field($_POST['specific_page']), $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
+                }
+                ?>
+              </select>
+            </ul>
+          </div>
+          <div class="input"><input title="Select this to perform a dry run without making data changes" type="checkbox" class="dry-run" name="ai_seo_dry_run" checked><label for="ai_seo_dry_run">Dry Run - <i>Generate SEO data without amending posts/pages</i></label></div>
+          <input type="submit" name="ai_seo_generate" class="button button-primary" value="Generate Descriptions">
+          <div id="loading-indicator" style="display: none;">Loading...</div>
+          <?php
+          //Function to handle form submission
+          handle_post_request();
+          ?>
+        </form>
+      <?php } ?>
+    </div>
   </section>
 <?php
 }
@@ -112,31 +138,36 @@ function ai_seo_generator_settings_page()
 
   // Display settings form
 ?>
-  <section id="aiSeo" class="wrapper">
-    <h1>AI SEO Generator Settings</h1>
-    <form method="post">
-      <?php wp_nonce_field('ai_seo_generator_save_api_key'); ?>
-      <table class="form-table">
-        <tr>
-          <th scope="row"><label for="api_key">ChatGPT API Key</label></th>
-          <td>
-            <input class="api_key" type="text" id="api_key" name="api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text">
-            <p class="description">Enter your ChatGPT API key.</p>
-          </td>
-        </tr>
-      </table>
-      <?php submit_button('Save API Key', 'primary', 'save_api_key'); ?>
-    </form>
-    <h2>How to get an API key from OpenAI</h2>
-    <ol>
-      <li>Go to the OpenAI website: <a target="_blank" href="https://openai.com">https://openai.com</a></li>
-      <li>Create an account or log in to your existing account</li>
-      <li>Go to the API section of your account settings</li>
-      <li>Generate an API key</li>
-      <li>Copy the generated API key</li>
-      <li>Paste the API key into the "ChatGPT API Key" field above</li>
-      <li>Click "Save API Key"</li>
-    </ol>
+  <section id="aiSeo">
+    <div class="wrapper">
+      <h1>AI SEO Generator Settings</h1>
+      <?php if (empty(get_option('openai_api_key'))) { ?>
+        <h2>How to get an API key from OpenAI</h2>
+        <ol>
+          <li>Go to the OpenAI website: <a target="_blank" href="https://openai.com">https://openai.com</a></li>
+          <li>Create an account or log in to your existing account</li>
+          <li>Go to the API section of your account settings</li>
+          <li>Generate an API key</li>
+          <li>Copy the generated API key</li>
+          <li>Paste the API key into the "ChatGPT API Key" field above</li>
+          <li>Click "Save API Key"</li>
+        </ol>
+      <?php } ?>
+      <form method="post">
+        <?php wp_nonce_field('ai_seo_generator_save_api_key'); ?>
+        <table class="form-table">
+          <tr>
+            <th scope="row"><label for="api_key">ChatGPT API Key</label></th>
+            <td>
+              <input class="api_key" type="text" id="api_key" name="api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text">
+              <p class="description">Enter your ChatGPT API key.</p>
+            </td>
+          </tr>
+        </table>
+        <?php submit_button('Save API Key', 'primary', 'save_api_key'); ?>
+      </form>
+    </div>
   </section>
+  </div>
 <?php
 }
