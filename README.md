@@ -36,6 +36,36 @@ You can configure the SEO AI WordPress Plugin by following these steps:
 3. Adjust the plugin settings according to your preferences.
 4. Click on the "Save Changes" button to apply the configuration.
 
+### Development
+
+### Development and Compilation with Sass
+
+To amend development and compile styling with Sass, you can follow these steps:
+
+1. Make sure you have Sass installed on your system. If not, you can install it by running the following command in your terminal:
+
+```
+npm install -g sass
+```
+
+2. Create a new file called `styles.scss` in your project directory. This file will contain your Sass code.
+
+3. Open your terminal and navigate to the directory where your `styles.scss` file is located.
+
+4. Run the following command to start watching the `styles.scss` file for changes and automatically compile it to `styles.min.css`:
+
+```
+sass --watch styles.scss:styles.min.css --style compressed
+```
+
+This command tells Sass to watch the `styles.scss` file and compile it to `styles.min.css` with the `compressed` style option, which minifies the output CSS.
+
+5. Now, whenever you make changes to the `styles.scss` file and save it, Sass will automatically compile the updated code to `styles.min.css`.
+
+Note: If you prefer a different output style, you can replace `compressed` with `expanded`, `nested`, or `compact` in the command.
+
+That's it! You have successfully set up development and compilation of styling with Sass using the `--watch` flag. Now you can make changes to your Sass code and see the compiled CSS update automatically.
+
 ### Support
 
 If you encounter any issues or have any questions, please reach out to our support team at support@seoaiplugin.com.

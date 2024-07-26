@@ -1,0 +1,216 @@
+:root {
+  color-scheme: light dark;
+}
+
+.toplevel_page_ai-seo-generator,
+.ai-seo-generator_page_ai-seo-generator-setting {
+  font-size: 16px;
+  color: light-dark(#2d3748, #f9f9f9);
+}
+
+#aiSeo {
+  width: 100%;
+  height: calc(100vh - 32px);
+  background-color: light-dark(#c6dad0, #2a332f);
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: light-dark(#fff, #4a4a4a);
+    box-shadow: 0 0 10px #0000001a;
+    border-radius: 8px;
+
+    h1 {
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: light-dark(#2d3748, #f9f9f9);
+    }
+  }
+
+  .ai-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: light-dark(#2d3748, #f9f9f9);
+
+    input[type="checkbox"] {
+      margin: 0 10px 0 0;
+      background-color: light-dark(#f9f9f9, #2d3748);
+      border: solid 1px #2d3748;
+      &::before {
+        color: light-dark(#2d3748, #f9f9f9);
+      }
+    }
+
+    input[type="radio"] {
+      background-color: light-dark(#f9f9f9, #2d3748);
+      border: solid 1px #2d3748;
+
+      &::before {
+        background-color: light-dark(#2d3748, #f9f9f9);
+      }
+    }
+
+    input[type="text"] {
+      background-color: light-dark(#f9f9f9, #2d3748);
+      border: solid 1px #2d3748;
+      color: light-dark(#2d3748, #f9f9f9);
+    }
+
+    .form-table label,
+    .form-table .description {
+      color: light-dark(#2d3748, #f9f9f9);
+    }
+
+    .response {
+      padding: 0;
+      margin: 0;
+    }
+
+    .input {
+      display: block;
+
+      input,
+      label {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+    .postType {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: light-dark(#2d3748, #f9f9f9);
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        color: light-dark(#2d3748, #f9f9f9);
+        i {
+          font-size: 12px;
+        }
+      }
+
+      select {
+        padding: 8px;
+        height: auto;
+        font-size: 16px;
+        border: 1px solid light-dark(#f9f9f9, #2d3748);
+        border-radius: 4px;
+        color: light-dark(#2d3748, #f9f9f9);
+        background: light-dark(#f9f9f9, #2d3748);
+        width: 100%;
+        background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23a0a5aa%22%2F%3E%3C%2Fsvg%3E);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-position-x: 95%;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+
+        &:disabled {
+          opacity: 0.5;
+          visibility: hidden;
+          transition: opacity 0.3s ease;
+          display: none;
+        }
+      }
+    }
+
+    p.submit {
+      margin: 0 auto;
+    }
+
+    .button.button-primary {
+      width: 300px;
+      text-align: center;
+      align-self: center;
+      padding: 20px;
+      text-transform: uppercase;
+      font-weight: bold;
+      background-color: light-dark(#0073aa, #003d5c);
+      border: none;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #005f8d;
+      }
+    }
+  }
+}
+
+#loading-gif {
+  margin: 0 auto;
+  width: 50px;
+  height: 50px;
+}
+.api_key {
+  -webkit-text-security: disc;
+}
+
+#wpcontent,
+#wpfooter {
+  margin-left: 140px;
+}
+
+#wpfooter,
+.notice {
+  display: none;
+}
+
+#aiSeo footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0 20px;
+  width: auto;
+  color: light-dark(#2d3748, #f9f9f9);
+}
+
+/* Media Queries */
+
+@media screen and (max-width: 768px) {
+  #aiSeo {
+    height: 100%;
+    padding: 40px 0;
+    position: relative;
+  }
+
+  .wrapper {
+    width: 80%;
+  }
+
+  .ai-form {
+    gap: 10px;
+  }
+
+  .button.button-primary {
+    width: 100%;
+  }
+
+  #wpbody-content {
+    padding-bottom: 0 !important;
+  }
+
+  #wpcontent,
+  #wpfooter {
+    padding-left: 0 !important;
+  }
+}

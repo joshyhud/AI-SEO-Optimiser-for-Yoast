@@ -84,7 +84,7 @@ function ai_seo_generator_page()
         <p>This plugin generates SEO descriptions and keywords for pages and posts using OpenAI and updates the Yoast SEO fields. It provides a user-friendly interface for generating SEO data and allows you to choose the content type (posts, pages, or specific pages) for which you want to generate descriptions.</p>
         <i>Select a content type or specific page to get started:</i>
 
-        <form method="post" class="ai-form">
+        <form method="post" class="ai-form" id="ai-seo-form">
           <?php wp_nonce_field('ai_seo_generate_action', 'ai_seo_generate_nonce'); ?>
           <div class="postType">
             <ul>
@@ -102,22 +102,28 @@ function ai_seo_generator_page()
                 <?php
                 $pages = get_pages();
                 foreach ($pages as $page) {
-                  echo '<option value="' . esc_attr($page->ID) . '"' . selected(sanitize_text_field($_POST['specific_page']), $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
+                  echo '<option value="' . esc_attr($page->ID) . '"' . selected(sanitize_text_field($_POST['specific_page'] ?? ''), $page->ID, false) . '>' . esc_html($page->post_title) . '</option>';
                 }
                 ?>
               </select>
             </ul>
           </div>
           <div class="input"><input title="Select this to perform a dry run without making data changes" type="checkbox" class="dry-run" name="ai_seo_dry_run" checked><label for="ai_seo_dry_run">Dry Run - <i>Generate SEO data without amending posts/pages</i></label></div>
-          <input type="submit" name="ai_seo_generate" class="button button-primary" value="Generate Descriptions">
-          <div id="loading-indicator" style="display: none;">Loading...</div>
-          <?php
-          //Function to handle form submission
-          handle_post_request();
-          ?>
+          <input type="hidden" name="action" value="ai_seo_generate_action">
+          <?php wp_nonce_field('ai_seo_generate_action', 'ai_seo_generate_nonce'); ?>
+          <button type="submit" name="ai_seo_generate" class="button button-primary">
+            <span id="button-text">Generate Descriptions</span>
+          </button>
+          <img id="loading-gif" src="/wp-content/plugins/seo-ai/assets/images/loading.gif" style="display:none;">
+
         </form>
+        <!-- Area to display the response -->
+        <div id="response-area"></div>
       <?php } ?>
     </div>
+    <footer>
+      <p>Built by <a target="_blank" href="https://josh-hudson.co.uk">Josh Hudson Dev</a></p>
+    </footer>
   </section>
 <?php
 }
@@ -153,7 +159,7 @@ function ai_seo_generator_settings_page()
           <li>Click "Save API Key"</li>
         </ol>
       <?php } ?>
-      <form method="post">
+      <form method="post" class="ai-form">
         <?php wp_nonce_field('ai_seo_generator_save_api_key'); ?>
         <table class="form-table">
           <tr>
@@ -167,6 +173,9 @@ function ai_seo_generator_settings_page()
         <?php submit_button('Save API Key', 'primary', 'save_api_key'); ?>
       </form>
     </div>
+    <footer>
+      <p>Built by <a target="_blank" href="https://josh-hudson.co.uk">Josh Hudson Dev</a></p>
+    </footer>
   </section>
   </div>
 <?php

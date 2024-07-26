@@ -3,8 +3,9 @@
 // Enqueue the styles and script files
 function ai_seo_enqueue_styles()
 {
-  wp_enqueue_style('ai-seo-styles', plugin_dir_url(__FILE__) . 'styles.min.css');
-  wp_enqueue_script('ai-seo-scripts', plugin_dir_url(__FILE__) . 'scripts.js', array('jquery'), null, true);
+  wp_enqueue_style('ai-seo-styles', plugin_dir_url(__FILE__) . 'assets/css/styles.min.css');
+  wp_enqueue_script('ai-seo-scripts', plugin_dir_url(__FILE__) . 'assets/js/scripts.js');
+  wp_localize_script('ai-seo-scripts', 'ai_seo_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('admin_enqueue_scripts', 'ai_seo_enqueue_styles');
 
@@ -23,10 +24,11 @@ use GuzzleHttp\Client;
 
 function handle_post_request()
 {
-  if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ai_seo_generate'])) {
+  if (isset($_POST['action'])) {
     // Verify nonce for CSRF protection
     if (!isset($_POST['ai_seo_generate_nonce']) || !wp_verify_nonce($_POST['ai_seo_generate_nonce'], 'ai_seo_generate_action')) {
-      die('Security check failed');
+      echo 'Security check failed';
+      wp_die();
     }
 
     // Sanitize inputs
@@ -36,7 +38,8 @@ function handle_post_request()
 
     // Validate content type
     if (!in_array($content_types, ['post', 'page', 'specific_page'])) {
-      die('Select a content type');
+      echo 'Select a content type';
+      wp_die();
     }
 
     $descriptions = [];
@@ -47,7 +50,7 @@ function handle_post_request()
         $current_meta_desc = get_post_meta($post->ID, '_yoast_wpseo_metadesc', true);
         $current_keywords = get_post_meta($post->ID, '_yoast_wpseo_focuskw', true);
         if (!empty($current_meta_desc) && !empty($current_keywords)) {
-          echo "<p>Meta description and Keywords already exist for post: " . esc_html(get_the_title($post->ID)) . ". Skipping...</p>";
+          echo "<p class='response'>Meta description and Keywords already exist for post: " . esc_html(get_the_title($post->ID)) . ". Skipping...</p>";
           continue;
         }
         $descriptions[$post->ID] = fetch_ai_description($post->post_content);
@@ -64,7 +67,7 @@ function handle_post_request()
         $current_meta_desc = get_post_meta($page->ID, '_yoast_wpseo_metadesc', true);
         $current_keywords = get_post_meta($page->ID, '_yoast_wpseo_focuskw', true);
         if (!empty($current_meta_desc) && !empty($current_keywords)) {
-          echo "<p>Meta description or Keywords already exist for page: " . esc_html(get_the_title($page->ID)) . ". Skipping...</p>";
+          echo "<p class='response'>Meta description or Keywords already exist for page: " . esc_html(get_the_title($page->ID)) . ". Skipping...</p>";
           continue;
         }
         $descriptions[$page->ID] = fetch_ai_description($page->post_content);
@@ -72,7 +75,9 @@ function handle_post_request()
     }
 
     // Display or update the descriptions
-    echo "<h2>Generated Descriptions</h2>";
+    if (!empty($desc_text) || !empty($keywords[0])) {
+      echo "<h2>Generated Descriptions</h2>";
+    }
     foreach ($descriptions as $id => $desc) {
       $desc_text = is_string($desc) ? sanitize_text_field($desc) : '';
 
@@ -82,19 +87,22 @@ function handle_post_request()
       if (!$is_dry_run) {
         if (!empty($desc_text)) {
           update_post_meta($id, '_yoast_wpseo_metadesc', $desc_text);
-          echo "<p>Meta description updated for post/page: " . esc_html(get_the_title($id)) . " - Description: " . esc_html($desc_text) . "</p>";
+          echo "<p class='response'>Meta description updated for post/page: " . esc_html(get_the_title($id)) . " - Description: " . esc_html($desc_text) . "</p>";
         }
 
         if (!empty($keywords[0])) {
           update_post_meta($id, '_yoast_wpseo_focuskw', $keywords[0]);
-          echo "<p>Keywords updated for post/page: " . esc_html(get_the_title($id)) . " - Keywords: " . esc_html($keywords[0]) . "</p>";
+          echo "<p class='response'>Keywords updated for post/page: " . esc_html(get_the_title($id)) . " - Keywords: " . esc_html($keywords[0]) . "</p>";
         }
       } else {
-        echo "<p><strong>Post/Page: " . esc_html(get_the_title($id)) . " - </strong> Description: " . esc_html($desc_text) . ", Keywords: " . esc_html($keywords[0]) . " </p>";
+        echo "<p class='response'><strong>Post/Page: " . esc_html(get_the_title($id)) . " - </strong> Description: " . esc_html($desc_text) . ", Keywords: " . esc_html($keywords[0]) . " </p>";
       }
     }
+    wp_die(); // This is required to terminate immediately and return a proper response
   }
 }
+add_action('wp_ajax_ai_seo_generate_action', 'handle_post_request');
+add_action('wp_ajax_nopriv_ai_seo_generate_action', 'handle_post_request');
 
 /**
  * Extracts text content from Gutenberg blocks.
