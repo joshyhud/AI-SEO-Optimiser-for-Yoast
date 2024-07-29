@@ -4,24 +4,20 @@
 function ai_seo_enqueue_styles()
 {
   wp_enqueue_style('ai-seo-styles', plugin_dir_url(__FILE__) . 'assets/css/styles.min.css');
-  wp_enqueue_script('ai-seo-scripts', plugin_dir_url(__FILE__) . 'assets/js/scripts.js');
-  wp_localize_script('ai-seo-scripts', 'ai_seo_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+  wp_enqueue_script('ai-seo-scripts', plugin_dir_url(__FILE__) . 'assets/js/scripts.js', array('jquery'), null, true);
+  // Localize script with nonce and ajax URL
+  wp_localize_script('ai-seo-scripts', 'ai_seo_ajax_object', array(
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce'    => wp_create_nonce('ai_seo_nonce')
+  ));
 }
 add_action('admin_enqueue_scripts', 'ai_seo_enqueue_styles');
 
+use GuzzleHttp\Client;
 
 /**
  * Function to handle the POST request and generate SEO descriptions and keywords for posts and pages.
- *
- * This function handles the POST request and generates SEO descriptions and keywords for posts and pages.
- * It verifies the nonce for CSRF protection, sanitizes inputs, validates content type, and fetches AI-generated descriptions.
- * It then displays or updates the descriptions and keywords for each post or page.
- *
- * @return void
  */
-
-use GuzzleHttp\Client;
-
 function handle_post_request()
 {
   if (isset($_POST['action'])) {
@@ -38,7 +34,7 @@ function handle_post_request()
 
     // Validate content type
     if (!in_array($content_types, ['post', 'page', 'specific_page'])) {
-      echo 'Select a content type';
+      echo 'Select a valid content type';
       wp_die();
     }
 
@@ -75,13 +71,11 @@ function handle_post_request()
     }
 
     // Display or update the descriptions
-    if (!empty($desc_text) || !empty($keywords[0])) {
+    if (!empty($descriptions)) {
       echo "<h2>Generated Descriptions</h2>";
     }
     foreach ($descriptions as $id => $desc) {
       $desc_text = is_string($desc) ? sanitize_text_field($desc) : '';
-
-      // Move the keywords extraction inside the loop
       $keywords = extract_keywords_from_text($desc_text);
       $keywords = is_array($keywords) ? array_map('sanitize_text_field', $keywords) : [''];
       if (!$is_dry_run) {
@@ -106,12 +100,6 @@ add_action('wp_ajax_nopriv_ai_seo_generate_action', 'handle_post_request');
 
 /**
  * Extracts text content from Gutenberg blocks.
- *
- * This function takes a Gutenberg content string and extracts the text content from each block.
- * It supports blocks that store content in 'attrs' > 'content' and blocks that use 'innerHTML'.
- *
- * @param string $content The Gutenberg content string.
- * @return string The extracted text content.
  */
 function extract_text_from_gutenberg_content($content)
 {
@@ -120,10 +108,8 @@ function extract_text_from_gutenberg_content($content)
 
   foreach ($parsed_blocks as $block) {
     if (!empty($block['blockName']) && isset($block['attrs']['content'])) {
-      // Some blocks store content in 'attrs' > 'content'
       $text_content .= wp_strip_all_tags($block['attrs']['content']) . "\n";
     } elseif (isset($block['innerHTML'])) {
-      // Otherwise, use the 'innerHTML'
       $text_content .= wp_strip_all_tags($block['innerHTML']) . "\n";
     }
   }
@@ -133,15 +119,9 @@ function extract_text_from_gutenberg_content($content)
 
 /**
  * Fetch AI-generated description for a given post content.
- *
- * This function takes the post content and uses the OpenAI API to generate a concise, enticing SEO meta description.
- *
- * @param string $post_content The content of the post.
- * @return string The AI-generated meta description.
  */
 function fetch_ai_description($post_content)
 {
-  // If no content, skip
   if (empty($post_content)) {
     return 'Content is empty.';
   }
@@ -149,7 +129,6 @@ function fetch_ai_description($post_content)
   $text_content = extract_text_from_gutenberg_content($post_content);
   $api_key = get_option('openai_api_key');
 
-  // Check if API key is empty
   if (empty($api_key)) {
     return 'Please update your API key in the plugin settings page.';
   }
@@ -164,7 +143,7 @@ function fetch_ai_description($post_content)
       'json' => [
         'model' => 'gpt-3.5-turbo-0125',  // Use an appropriate model
         'messages' => [
-          ['role' => 'user', 'content' =>  "Write a concise, enticing SEO meta description that summarizes the following content while emphasizing key points and relevant keywords with no more than 155 characters: " . $text_content]
+          ['role' => 'user', 'content' => "Write a concise, enticing SEO meta description that summarizes the following content while emphasizing key points and relevant keywords with no more than 155 characters: " . $text_content]
         ]
       ]
     ]);
@@ -183,21 +162,13 @@ function fetch_ai_description($post_content)
 
 /**
  * Extract keywords from text.
- *
- * This function takes a text string and extracts the most frequently occurring keywords.
- *
- * @param string $text The text to extract keywords from.
- * @param int $num_keywords The number of keywords to extract (default: 5).
- * @return array The array of extracted keywords.
  */
 function extract_keywords_from_text($text, $num_keywords = 5)
 {
-  // If no text, skip
   if (empty($text)) {
     return [];
   }
 
-  // List of common stop words
   $stopwords = [
     "a", "about", "above", "after", "again", "against", "all", "also", "am", "an", "and", "any", "are", "aren't", "as", "at",
     "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can", "can't", "cannot", "could", "couldn't",

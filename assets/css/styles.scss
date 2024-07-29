@@ -17,6 +17,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 
   .wrapper {
     max-width: 600px;
@@ -25,6 +26,19 @@
     background: light-dark(#fff, #4a4a4a);
     box-shadow: 0 0 10px #0000001a;
     border-radius: 8px;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: light-dark(#2d3748, #f9f9f9);
+    }
+
+    a {
+      color: light-dark(#2271b1, #bbd9f1);
+    }
 
     h1 {
       font-size: 24px;
@@ -67,6 +81,10 @@
     .form-table label,
     .form-table .description {
       color: light-dark(#2d3748, #f9f9f9);
+    }
+
+    #response-area {
+      overflow-y: scroll;
     }
 
     .response {
@@ -161,6 +179,7 @@
   width: 50px;
   height: 50px;
 }
+
 .api_key {
   -webkit-text-security: disc;
 }

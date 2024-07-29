@@ -8,11 +8,19 @@ Author: Your Name
 Author URI: https://josh-hudson.co.uk
 */
 
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+  exit;
+}
+
+// Include necessary files
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+// Register activation hook
 register_activation_hook(__FILE__, 'ai_seo_plugin_activation');
 
+// Function to run on plugin activation
 function ai_seo_plugin_activation()
 {
   if (!is_plugin_active('wordpress-seo/wp-seo.php')) {
@@ -21,17 +29,19 @@ function ai_seo_plugin_activation()
   }
 }
 
-// Hook into WordPress
+// Hook into WordPress save_post action
 add_action('save_post', 'ai_generate_seo_content');
 
+// Function to generate SEO content on save_post action
 function ai_generate_seo_content($post_id)
 {
   // Functionality to be added here
 }
 
-// Create WordPress admin menu items
+// Hook into WordPress admin_menu action
 add_action('admin_menu', 'ai_seo_description_menu');
 
+// Function to create WordPress admin menu items
 function ai_seo_description_menu()
 {
   add_menu_page(
