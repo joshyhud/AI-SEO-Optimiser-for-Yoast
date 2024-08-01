@@ -1,0 +1,32 @@
+Envato Marketplaces License
+===========================
+
+This plugin is licensed under the Envato Marketplaces Regular/Extended License.
+For more information on the licensing terms, please visit:
+
+https://codecanyon.net/licenses/standard
+
+This plugin is the intellectual property of [Your Name or Your Company].
+All rights reserved.
+
+Terms and Conditions
+--------------------
+
+1. Grant of License
+You are granted a non-exclusive, non-transferable license to use this plugin in accordance with the terms of the Envato Marketplaces License.
+
+2. Restrictions
+You may not:
+- Resell, redistribute, or sublicense this plugin without explicit permission.
+- Use the plugin in more than one project without purchasing additional licenses.
+- Claim ownership or authorship of this plugin.
+
+3. Disclaimer of Warranties
+This plugin is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose.
+
+4. Limitation of Liability
+In no event shall the author be liable for any damages (including, without limitation, lost profits, business interruption, or lost information) arising out of the use of or inability to use this plugin.
+
+Contact Information
+-------------------
+For support or inquiries, please contact [Your Email Address].

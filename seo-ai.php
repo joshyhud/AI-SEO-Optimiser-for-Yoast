@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: AI SEO Description Generator
+Plugin Name: AI SEO Optimiser for Yoast
 Plugin URI: http://yourwebsite.com/
-Description: Generates SEO descriptions and keywords for pages and posts using OpenAI and updates Yoast SEO fields.
+Description: Boost your website's search engine performance with AI SEO Optimiser for Yoast. This powerful WordPress plugin leverages the advanced capabilities of OpenAI to automatically generate high-quality SEO descriptions and keywords for your pages and posts. Seamlessly integrated with Yoast SEO, AI SEO Optimiser ensures your content is always optimised for search engines, helping you rank higher and attract more organic traffic.
 Version: 1.0
 Author: Your Name
 Author URI: https://josh-hudson.co.uk
