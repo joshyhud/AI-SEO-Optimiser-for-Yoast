@@ -1,6 +1,6 @@
-## SEO AI WordPress Plugin
+## AI SEO Optimiser for Yoast
 
-The SEO AI WordPress Plugin is a powerful tool that helps optimize your website's SEO effortlessly. It generates Yoast SEO descriptions and keywords based on the content of your pages or posts.
+The AI SEO Optimiser Plugin is a powerful tool that helps optimize your website's SEO effortlessly. It generates Yoast SEO descriptions and keywords based on the content of your pages or posts.
 
 ## Features
 
