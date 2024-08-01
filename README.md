@@ -64,11 +64,24 @@ Note: If you prefer a different output style, you can replace `compressed` with 
 
 ## Support
 
-If you encounter any issues or have any questions, please reach out to our support team at support@seoaiplugin.com.
+If you encounter any issues or have any questions, please reach raise a github issue
 
 ## Contributing
 
-We welcome contributions from the community! If you would like to contribute to the SEO AI WordPress Plugin, please follow our [contribution guidelines](https://github.com/seo-ai/wordpress-plugin/blob/main/CONTRIBUTING.md).
+We welcome contributions from the community! If you would like to contribute to the SEO AI WordPress Plugin, please follow these steps:
+
+1. Fork the [SEO AI WordPress Plugin repository](https://github.com/seo-ai/wordpress-plugin).
+2. Clone your forked repository to your local machine.
+3. Create a new branch for your contribution.
+4. Make your desired changes to the codebase.
+5. Commit and push your changes to your forked repository.
+6. Open a pull request (PR) from your branch to the main repository.
+7. Provide a clear and descriptive title and description for your PR.
+8. Wait for the maintainers to review your changes and provide feedback.
+9. Make any necessary updates based on the feedback received.
+10. Once your PR is approved, it will be merged into the main repository.
+
+Thank you for your interest in contributing to the SEO AI WordPress Plugin!
 
 ## License
 
