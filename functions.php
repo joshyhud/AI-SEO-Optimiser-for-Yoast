@@ -99,23 +99,34 @@ add_action('wp_ajax_ai_seo_generate_action', 'handle_post_request');
 add_action('wp_ajax_nopriv_ai_seo_generate_action', 'handle_post_request');
 
 /**
- * Extracts text content from Gutenberg blocks.
+ * Recursively extract text content from Gutenberg blocks.
  */
 function extract_text_from_gutenberg_content($content)
 {
   $parsed_blocks = parse_blocks($content);
+  return extract_text_from_blocks_recursive($parsed_blocks);
+}
+
+/**
+ * Helper function to recursively process Gutenberg blocks.
+ */
+function extract_text_from_blocks_recursive($blocks)
+{
   $text_content = '';
 
-  foreach ($parsed_blocks as $block) {
-    if (!empty($block['blockName']) && isset($block['attrs']['content'])) {
-      $text_content .= wp_strip_all_tags($block['attrs']['content']) . "\n";
-    } elseif (isset($block['innerHTML'])) {
+  foreach ($blocks as $block) {
+    if (isset($block['innerHTML']) && is_string($block['innerHTML'])) {
       $text_content .= wp_strip_all_tags($block['innerHTML']) . "\n";
+    }
+
+    if (!empty($block['innerBlocks'])) {
+      $text_content .= extract_text_from_blocks_recursive($block['innerBlocks']);
     }
   }
 
   return $text_content;
 }
+
 
 /**
  * Fetch AI-generated description for a given post content.
