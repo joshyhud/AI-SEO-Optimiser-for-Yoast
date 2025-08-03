@@ -141,7 +141,7 @@ function fetch_ai_description($post_content)
         'Content-Type' => 'application/json',
       ],
       'json' => [
-        'model' => 'gpt-3.5-turbo-0125',  // Use an appropriate model
+        'model' => 'gpt-4o',  // Use an appropriate model
         'messages' => [
           ['role' => 'user', 'content' => "Write a concise, enticing SEO meta description that summarizes the following content while emphasizing key points and relevant keywords with no more than 155 characters: " . $text_content]
         ]
